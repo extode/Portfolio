@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Portfolio</string>
+    <string name="invalid_login_or_password">Введено неправильное имя пользователя или пароль</string>
+    <string name="password">Пароль</string>
+    <string name="login">Логин</string>
+    <string name="sign_in">Войти</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="loading">Загрузка…</string>
+    <string name="logging_in">Вход…</string>
+    <string name="name">Имя</string>
+</resources>
