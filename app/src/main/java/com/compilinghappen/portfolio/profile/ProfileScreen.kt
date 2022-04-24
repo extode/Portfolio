@@ -1,7 +1,6 @@
 package com.compilinghappen.portfolio.profile
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +8,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.compilinghappen.portfolio.Album
 import com.compilinghappen.portfolio.LoadingOverlay
 import com.compilinghappen.portfolio.R
@@ -34,15 +33,35 @@ import com.compilinghappen.portfolio.ui.theme.PortfolioTheme
 @Composable
 fun ProfileScreen(
     onAlbumClicked: (Album) -> Unit,
+    onCreateNewAlbum: () -> Unit,
     profileViewModel: ProfileViewModel = viewModel()
 ) {
+    profileViewModel.init()
+
     val user by profileViewModel.user.observeAsState()
     val albums by profileViewModel.albums.observeAsState()
 
     if (user == null || albums == null) {
         LoadingOverlay(text = stringResource(R.string.loading))
-    } else {
-        ProfileList(albums!!, user!!, onAlbumClicked = onAlbumClicked)
+    }
+    else {
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    onCreateNewAlbum()
+                    profileViewModel.invalidate()
+                }) {
+                    Icon(Icons.Filled.Add, contentDescription = null)
+                }
+            }
+        ) {
+            ProfileList(albums!!, user!!, onAlbumClicked = {
+                profileViewModel.selectAlbum(it)
+                onAlbumClicked(it)
+            })
+        }
+
+
     }
 }
 
@@ -71,8 +90,8 @@ fun AlbumItem(album: Album, onClick: () -> Unit, modifier: Modifier = Modifier) 
         modifier = modifier.padding(8.dp),
         onClick = onClick
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(album.photos[0]),
+        AsyncImage(
+            model = album.titlePhoto.path,
             contentDescription = null,
             modifier = Modifier
                 .aspectRatio(1f)
@@ -132,7 +151,7 @@ fun ImageCard(
 
 @Composable
 fun LikeIndicator(likes: Int, modifier: Modifier = Modifier) {
-    Row(modifier.padding(8.dp)) {
+    Row(modifier) {
         Icon(Icons.Filled.Favorite, contentDescription = null)
         Spacer(Modifier.width(4.dp))
         Text(likes.toString())

@@ -1,5 +1,6 @@
 package com.compilinghappen.portfolio.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -9,6 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,7 +27,11 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignInScreen(signUpSucceeded: () -> Unit, switchedToRegister: () -> Unit, signInViewModel: SignInViewModel = viewModel()) {
+fun SignInScreen(
+    signUpSucceeded: () -> Unit,
+    switchedToRegister: () -> Unit,
+    signInViewModel: SignInViewModel = viewModel()
+) {
     var login by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
@@ -38,7 +45,7 @@ fun SignInScreen(signUpSucceeded: () -> Unit, switchedToRegister: () -> Unit, si
         return
     }
 
-    Box {
+    Box(Modifier.background(MaterialTheme.colors.secondary)) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -46,12 +53,18 @@ fun SignInScreen(signUpSucceeded: () -> Unit, switchedToRegister: () -> Unit, si
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier.size(96.dp).clip(CircleShape)
+            )
+            /*
             Box(
                 Modifier
                     .width(96.dp)
                     .height(96.dp)
                     .background(MaterialTheme.colors.primary, CircleShape)
-            )
+            )*/
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

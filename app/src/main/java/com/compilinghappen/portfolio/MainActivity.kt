@@ -1,17 +1,13 @@
 package com.compilinghappen.portfolio
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -24,8 +20,11 @@ import androidx.navigation.compose.rememberNavController
 import com.compilinghappen.portfolio.ui.theme.PortfolioTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.compilinghappen.portfolio.albumdetails.AlbumDetailsScreen
 import com.compilinghappen.portfolio.auth.SignInScreen
 import com.compilinghappen.portfolio.auth.SignUpScreen
+import com.compilinghappen.portfolio.home.HomeScreen
+import com.compilinghappen.portfolio.profile.AlbumCreationScreen
 import com.compilinghappen.portfolio.profile.ProfileScreen
 
 
@@ -36,6 +35,9 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
 
     object AlbumDetails :
         Screen(route = "album_details", title = "Детали", icon = Icons.Filled.Close)
+
+    object AlbumCreation :
+        Screen(route = "album_creation", title = "Создание альбома", icon = Icons.Filled.Close)
 }
 
 
@@ -71,24 +73,21 @@ fun PortfolioApp() {
         ) { innerPadding ->
             BottomBarMain(navController, modifier = Modifier.padding(innerPadding))
         }
-    }
-    else {
+    } else {
         if (!isRegister) {
             SignInScreen(
                 signUpSucceeded = {
                     ApiUtils.saveUserToken(context, UserToken!!)
                     loginSucceeded = true
                 },
-                switchedToRegister = {isRegister = true}
+                switchedToRegister = { isRegister = true }
             )
-        }
-        else {
+        } else {
             SignUpScreen(onRegistered = {
                 ApiUtils.saveUserToken(context, UserToken!!)
                 loginSucceeded = true
             })
         }
-
     }
 }
 
@@ -121,27 +120,41 @@ fun BottomBar(navController: NavController) {
 fun BottomBarMain(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController, startDestination = Screen.Home.route, modifier = modifier) {
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(onAlbumClicked = {
+                navController.navigate("${Screen.AlbumDetails.route}/${it.id}&false")
+            })
         }
         composable(Screen.Explore.route) {
             ExploreScreen()
         }
         composable(Screen.Profile.route) {
-            ProfileScreen(onAlbumClicked = {
-                navController.navigate("${Screen.AlbumDetails.route}/${it.id}")
-                Log.d("MainActivity", "Navigating")
-            })
+            ProfileScreen(
+                onAlbumClicked = {
+                    navController.navigate("${Screen.AlbumDetails.route}/${it.id}&true")
+                },
+                onCreateNewAlbum = {
+                    navController.navigate(Screen.AlbumCreation.route)
+                }
+            )
         }
         composable(
-            route = "${Screen.AlbumDetails.route}/{albumId}",
+            route = "${Screen.AlbumDetails.route}/{albumId}&{editable}",
             arguments = listOf(
                 navArgument("albumId") {
                     type = NavType.IntType
+                },
+                navArgument("editable"){
+                    type = NavType.BoolType
                 }
             )
         ) { entry ->
             val albumId = entry.arguments?.getInt("albumId")!!
-            AlbumDetailsScreen(albumId)
+            val editable = entry.arguments?.getBoolean("editable")!!
+            AlbumDetailsScreen(albumId, editable = editable)
+        }
+
+        composable(Screen.AlbumCreation.route) {
+            AlbumCreationScreen(onCreated = navController::popBackStack)
         }
     }
 }

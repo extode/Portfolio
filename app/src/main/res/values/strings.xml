@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Portfolio</string>
+    <string name="app_name">Tefio</string>
     <string name="invalid_login_or_password">Введено неправильное имя пользователя или пароль</string>
     <string name="password">Пароль</string>
     <string name="login">Логин</string>
@@ -8,4 +8,11 @@
     <string name="loading">Загрузка…</string>
     <string name="logging_in">Вход…</string>
     <string name="name">Имя</string>
+
+
+    <string name="empty_directory">Empty Directory</string>
+    <string name="storage_removed">Storage was removed or unmounted.</string>
+    <string name="choose_file">Select a file</string>
+    <string name="error_selecting_file">Error selecting File</string>
+    <string name="internal_storage">Internal storage</string>
 </resources>

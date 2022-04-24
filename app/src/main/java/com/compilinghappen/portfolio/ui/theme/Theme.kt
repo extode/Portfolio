@@ -5,11 +5,18 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
+    /*primary = Purple200,
     primaryVariant = Purple700,
-    secondary = Teal200
+    secondary = Teal200*/
+
+    primary = lightBrown,
+    onPrimary = Color.White,
+    secondary = darkBrown,
+    onSecondary = Color.White,
+    surface = darkBrown
 )
 
 private val LightColorPalette = lightColors(
@@ -29,11 +36,13 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun PortfolioTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
+    /*val colors = if (darkTheme) {
         DarkColorPalette
     } else {
         LightColorPalette
-    }
+    }*/
+
+    val colors = DarkColorPalette
 
     MaterialTheme(
         colors = colors,
